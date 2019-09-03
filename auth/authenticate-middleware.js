@@ -13,16 +13,16 @@ module.exports = (req, res, next) => {
     jwt.verify(token, secrets.jwtSecret, (err, decodedToken) => {
       if (err) {
         // bad token
-        res.status(401).json({ message: 'error verifying token', error: err });
+        res.status(401).json({ message: 'Error verifying token', error: err });
       } else {
         // decodedToken
-        req.decodedJwt = decodedToken;
+        req.user = { username: decodedToken.username };
         next();
       }
     });
   } else {
     res
       .status(401)
-      .json({ message: 'invalid scheme, or no token after scheme name.' });
+      .json({ message: 'Invalid scheme, or no token after scheme name.' });
   }
 };

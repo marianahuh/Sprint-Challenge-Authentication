@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const secrets = require('../config/secrets.js');
 
-const Users = require('../users/usersModel.js');
+const Users = require('./auth-model.js');
 
 router.post('/register', (req, res) => {
   // implement registration
@@ -12,11 +12,11 @@ router.post('/register', (req, res) => {
   user.password = hash;
 
   Users.add(user)
-    .then(saved => {
-      res.status(201).json(saved);
+    .then(user => {
+      res.status(201).json(user);
     })
-    .catch(error => {
-      res.status(500).json(error);
+    .catch(err => {
+      res.status(500).json({ message: 'Error registering user.' });
     });
 });
 
@@ -59,7 +59,7 @@ router.post('/login', (req, res) => {
 
 function genToken(user) {
   const payload = {
-    subject: 'user',
+    subject: user.id,
     username: user.username
   };
   const secret = secrets.jwtSecret;
